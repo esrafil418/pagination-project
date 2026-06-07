@@ -13,12 +13,20 @@ export default function App() {
       .then((res) => res.json())
       .then((datas) => {
         setTodos(datas);
+        let endIndex = pageSize * currentPage;
+        let startIndex = endIndex - pageSize;
+        let allShownTodos = datas.slice(startIndex, endIndex);
+        setPaginatedTodos(allShownTodos);
       })
       .catch((err) => console.log(err));
   }, []);
 
   const changePagination = (newPage) => {
     setCurrentPage(newPage);
+    let endIndex = pageSize * currentPage;
+    let startIndex = endIndex - pageSize;
+    let allShownTodos = todos.slice(startIndex, endIndex);
+    setPaginatedTodos(allShownTodos);
   };
 
   const pageCount = Math.ceil(todos.length / pageSize);
@@ -39,7 +47,7 @@ export default function App() {
             </tr>
           </thead>
           <tbody>
-            {todos.map((todo) => (
+            {paginatedTodos.map((todo) => (
               <tr key={todo.id}>
                 <td>{todo.id}</td>
                 <td>{todo.userId}</td>
