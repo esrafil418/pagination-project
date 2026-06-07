@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 
 export default function App() {
   const [todos, setTodos] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [paginatedTodos, setPaginatedTodos] = useState([]);
+
+  let pageSize = 10;
+  let pageNumbers;
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/todos")
@@ -11,6 +16,14 @@ export default function App() {
       })
       .catch((err) => console.log(err));
   }, []);
+
+  const changePagination = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const pageCount = Math.ceil(todos.length / pageSize);
+  pageNumbers = Array.from(Array(pageCount).keys());
+
   return (
     <div>
       {!todos ? (
@@ -27,8 +40,7 @@ export default function App() {
           </thead>
           <tbody>
             {todos.map((todo) => (
-              <tr>
-                {console.log(todo)}
+              <tr key={todo.id}>
                 <td>{todo.id}</td>
                 <td>{todo.userId}</td>
                 <td>{todo.title}</td>
@@ -46,6 +58,35 @@ export default function App() {
           </tbody>
         </table>
       )}
+      <nav className="d-flex justify-content-center">
+        <ul className="pagination">
+          <li className="page-item">
+            <a href="#" className="page-link">
+              Previous
+            </a>
+          </li>
+          {pageNumbers.map((pageNumber) => (
+            <li
+              key={pageNumber + 1}
+              className={
+                pageNumber + 1 === currentPage
+                  ? "page-item active"
+                  : "page-item"
+              }
+              onClick={() => changePagination(pageNumber + 1)}
+            >
+              <a className="page-link" href="#">
+                {pageNumber + 1}
+              </a>
+            </li>
+          ))}
+          <li className="page-item">
+            <a className="page-link" href="#">
+              Next
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 }
